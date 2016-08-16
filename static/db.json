@@ -1,0 +1,10 @@
+{
+	"players":[
+		{"name": "LeBron James",
+		"rank": 1},
+		{"name": "Kevin Love",
+		"rank": 2},
+		{"name": "Steven Adams",
+		"rank": 3}
+	]
+}

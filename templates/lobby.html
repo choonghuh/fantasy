@@ -1,0 +1,35 @@
+<html>
+<head>
+	<div id='header'><p>Draft Lobby</p></div>
+</head>
+<body>
+
+	{% if player_list %}
+		<ul>
+			{% for player in player_list %}
+				<li> {{ player.name }} is ranked at {{ player.rank }} </li>
+			{% endfor %}
+		</ul>
+	{% else %}
+		<p>Player list is empty or unavailable!</p>
+	{% endif %}
+
+	<div id='chatbox'></div>
+	<script type='text/javascript'> 
+		var chatbox = document.getElementById('chatbox');
+		var wsock = new WebSocket('ws://127.0.0.1:8000');
+
+		wsock.onmessage = function(msg) {
+			chatbox.innerHTML+='<p>'+msg.data+'</p>';
+		};
+
+		wsock.onopen = function(){
+			chatbox.innerHTML += "<p>Okay talk your trash to each other</p>";
+		};
+
+		wsock.onclose = function(){
+			chatbox.innerHTML += '<p>Your connection was lost, and you did too.</p>';
+		};
+	</script>
+</body>
+</html>
