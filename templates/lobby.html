@@ -14,10 +14,16 @@
 		<p>Player list is empty or unavailable!</p>
 	{% endif %}
 
+	<input id='submit'></input>
+	<button id='sendbutton'>Send</button>
+</br>
 	<div id='chatbox'></div>
+
 	<script type='text/javascript'> 
 		var chatbox = document.getElementById('chatbox');
 		var wsock = new WebSocket('ws://127.0.0.1:8000');
+		var submit = document.getElementById('submit');
+		var sendbutton = document.getElementById('sendbutton');
 
 		wsock.onmessage = function(msg) {
 			chatbox.innerHTML+='<p>'+msg.data+'</p>';
@@ -30,6 +36,23 @@
 		wsock.onclose = function(){
 			chatbox.innerHTML += '<p>Your connection was lost, and you did too.</p>';
 		};
+
+		sendbutton.onclick = function(){
+			if(submit.value!='')
+			{
+				wsock.send(submit.value);
+				submit.value='';
+			}
+		};
+
+		submit.keyup = function (e) {
+			if (e.keyCode == 13) {
+				wsock.send(submit.value);
+				submit.value="";
+			}
+		};
+
+
 	</script>
 </body>
 </html>
