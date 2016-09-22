@@ -34,7 +34,7 @@
 		};
 
 		wsock.onclose = function(){
-			chatbox.innerHTML += '<p>Your connection was lost, and you did too.</p>';
+			chatbox.innerHTML += '<p>Your connection was lost.</p>';
 		};
 
 		sendbutton.onclick = function(){
@@ -45,13 +45,16 @@
 			}
 		};
 
-		submit.keyup = function (e) {
-			if (e.keyCode == 13) {
+		submit.addEventListener("keydown", function(e) {
+			// if (!e) {var e = window.event;}
+			// e.preventDefault();
+
+			if (e.keyCode==13)
+			{
 				wsock.send(submit.value);
 				submit.value="";
 			}
-		};
-
+		});
 
 	</script>
 </body>
