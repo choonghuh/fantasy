@@ -62,11 +62,27 @@
 </br>
 
 	<script type='text/javascript'> 
-
 //================================= Important Vars =================================
 
 		var serverAddress = '127.0.0.1:8000';
 		var wsock = new WebSocket('ws://'+serverAddress);
+
+		function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = jQuery.trim(cookies[i]);
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		var csrftoken = getCookie('csrftoken');
 
 //================================= Player adding controls =================================
 
@@ -75,25 +91,40 @@
 		var playerAddFirstName = document.getElementById('firstname2');
 		var playerAddLastName = document.getElementById('lastname2');
 
-		playerAddButton.onclick = function(){
+		var playerAddButtonHandler = function(){
 
-			var playerAddURL = serverAddress+'/add_player';
+			var playerAddURL = 'http://'+serverAddress+'/add_player/';
 			var playerAddPayload = {
-				'first_name':firstname,
-				'last_name':lastname,
+				'first_name':playerAddFirstName.value,
+				'last_name':playerAddLastName.value,
 				'position':playerPositionSelect.value,
 			};
+
+			console.log(playerAddPayload);
 			
+			var fullname = playerAddPayload['first_name'] + " " + playerAddPayload['last_name'];
+			//alert("gonna call add");
 			$.ajax({
-				url:'localhost:8888/add_player',
-				data:playerAddPayload,
-				contentType:'application/json',
-				success: function(result)
+				url:playerAddURL,
+				data:JSON.stringify(playerAddPayload),
+				contentType:'json',
+				type: 'POST',
+			    
+			    beforeSend: function(xhr, settings) {
+		            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			    },
+				success: function()
 				{
-					chatbox.innerHTML += "<p>Player " + firstname + ' ' + lastname + "  added</p>";
+					chatbox.innerHTML += "<p>Player " + fullname + "  added</p>";
+				},
+				error: function()
+				{
+					alert("Failed to add " + fullname);
 				}
 			});
-		}
+		};
+
+		playerAddButton.onclick = playerAddButtonHandler;
 
 //================================= Chat controls =================================
 
@@ -131,7 +162,6 @@
 				submit.value="";
 			}
 		});
-
 	</script>
 </body>
 </html>

@@ -10,13 +10,17 @@ from fantasy.models import Player
 
 import json
 
+from django.views.decorators.csrf import csrf_exempt
+
 def home(request):
 	print "print works"
 	template = loader.get_template('lobby.html')
 	context = {'player_list':playerdb, 'player_list_raw':json.dumps(playerdb)}
 	return HttpResponse(template.render(context, request))
 
+@csrf_exempt
 def add_player(request):
+	print "[add_player]"
 	print request
 	print request.body
 	print request.POST
@@ -25,4 +29,4 @@ def add_player(request):
 									last_name=newPlayerData['last_name'],\
 									position=newPlayerData['position'])
 	print player.id
-	return HttpResponse('OK')
+	return HttpResponse(status=200)
