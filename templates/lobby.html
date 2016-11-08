@@ -1,8 +1,18 @@
-<html>
-<head>
-	<div id='header'><p>Draft Lobby</p></div>
+<!DOCTYPE html>
+<head>	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<!--script src="jquery.min.js"></script>
+	<script src="bootstrap.min.js"></script>
+	<link rel="stylesheet" href="bootstrap.min.css"-->
+
 </head>
 <body>
+
+	<div id='header'><p>Draft Lobby</p></div>
+
 
 	{% if player_list %}
 		<ul>
@@ -10,20 +20,86 @@
 				<li> {{ player.name }} is ranked at {{ player.rank }} </li>
 			{% endfor %}
 		</ul>
+		<script type="text/javascript">
+			var player_list = {{player_list_raw|safe}};
+		</script>
 	{% else %}
 		<p>Player list is empty or unavailable!</p>
 	{% endif %}
 
 	<input id='submit'></input>
 	<button id='sendbutton'>Send</button>
+	</br></br>
+
+	<div id='chatbox' class="col-sm-4"></div>
+
+	<div class="col-sm-4">
+		<form>
+			<div class="form-group">
+				<label for='firstname2'>First name:</label>
+				<input class='form-control' id='firstname2'>
+			</div>
+			<div class="form-group">
+				<label for='lastname2'>Last name:</label>
+				<input class='form-control' id='lastname2'>
+			</div>
+			<div class="form-group">
+				<label for='position2'>Position:</label>
+				<select class='form-control' id='position2'>
+					<option value"PG" selected>PG</option>
+					<option value"SG">SG</option>
+					<option value"SF">SF</option>
+					<option value"PF">PF</option>
+					<option value"C">C</option>
+				</select>
+			</div>
+			<button type="submit" class="btn btn-default" id='add-player-submit'>Submit</button>
+		</form>
+	</div>
+
+	</br>
+
 </br>
-	<div id='chatbox'></div>
 
 	<script type='text/javascript'> 
+
+//================================= Important Vars =================================
+
+		var serverAddress = '127.0.0.1:8000';
+		var wsock = new WebSocket('ws://'+serverAddress);
+
+//================================= Player adding controls =================================
+
+		var playerAddButton = document.getElementById('add-player-submit');
+		var playerPositionSelect = document.getElementById('position2');
+		var playerAddFirstName = document.getElementById('firstname2');
+		var playerAddLastName = document.getElementById('lastname2');
+
+		playerAddButton.onclick = function(){
+
+			var playerAddURL = serverAddress+'/add_player';
+			var playerAddPayload = {
+				'first_name':firstname,
+				'last_name':lastname,
+				'position':playerPositionSelect.value,
+			};
+			
+			$.ajax({
+				url:'localhost:8888/add_player',
+				data:playerAddPayload,
+				contentType:'application/json',
+				success: function(result)
+				{
+					chatbox.innerHTML += "<p>Player " + firstname + ' ' + lastname + "  added</p>";
+				}
+			});
+		}
+
+//================================= Chat controls =================================
+
 		var chatbox = document.getElementById('chatbox');
-		var wsock = new WebSocket('ws://127.0.0.1:8000');
-		var submit = document.getElementById('submit');
 		var sendbutton = document.getElementById('sendbutton');
+		var submit = document.getElementById('submit');
 
 		wsock.onmessage = function(msg) {
 			chatbox.innerHTML+='<p>'+msg.data+'</p>';

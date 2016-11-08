@@ -6,9 +6,23 @@ playerdb = settings.JS_DATABASE['players']
 
 from django.template import loader
 
+from fantasy.models import Player
+
 import json
 
 def home(request):
+	print "print works"
 	template = loader.get_template('lobby.html')
-	context = {'player_list':playerdb}
+	context = {'player_list':playerdb, 'player_list_raw':json.dumps(playerdb)}
 	return HttpResponse(template.render(context, request))
+
+def add_player(request):
+	print request
+	print request.body
+	print request.POST
+	newPlayerData = json.loads(request.body)
+	player = Player.objects.create(first_name=newPlayerData['first_name'],\
+									last_name=newPlayerData['last_name'],\
+									position=newPlayerData['position'])
+	print player.id
+	return HttpResponse('OK')
