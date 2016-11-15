@@ -31,7 +31,11 @@
 	<button id='sendbutton'>Send</button>
 	</br></br>
 
-	<div id='chatbox' class="col-sm-4"></div>
+	<div id='chatbox' class="col-sm-4">
+		<ul class="list-group" id="chat-ul">
+
+		</ul>
+	</div>
 
 	<div class="col-sm-4">
 		<form>
@@ -53,7 +57,7 @@
 					<option value"C">C</option>
 				</select>
 			</div>
-			<button type="submit" class="btn btn-default" id='add-player-submit'>Submit</button>
+			<button type="button" class="btn btn-default btn-block" id='add-player-submit'>Submit</button>
 		</form>
 	</div>
 
@@ -64,8 +68,8 @@
 	<script type='text/javascript'> 
 //================================= Important Vars =================================
 
-		var serverAddress = '127.0.0.1:8000';
-		var wsock = new WebSocket('ws://'+serverAddress);
+		var serverAddress = '127.0.0.1:8001';
+		var wsock = new WebSocket('ws://'+serverAddress +'/ws/');
 
 		function getCookie(name) {
 		    var cookieValue = null;
@@ -128,20 +132,20 @@
 
 //================================= Chat controls =================================
 
-		var chatbox = document.getElementById('chatbox');
+		var chatbox = document.getElementById('chat-ul');
 		var sendbutton = document.getElementById('sendbutton');
 		var submit = document.getElementById('submit');
 
 		wsock.onmessage = function(msg) {
-			chatbox.innerHTML+='<p>'+msg.data+'</p>';
+			chatbox.innerHTML+='<li class="list-group-item">'+msg.data+'</li>';
 		};
 
 		wsock.onopen = function(){
-			chatbox.innerHTML += "<p>Okay talk your trash to each other</p>";
+			chatbox.innerHTML += "<li class='list-group-item'>Okay talk your trash to each other</li>";
 		};
 
 		wsock.onclose = function(){
-			chatbox.innerHTML += '<p>Your connection was lost.</p>';
+			chatbox.innerHTML += '<li class="list-group-item">Your connection was lost.</li>';
 		};
 
 		sendbutton.onclick = function(){

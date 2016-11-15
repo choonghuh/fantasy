@@ -22,11 +22,15 @@ def home(request):
 def add_player(request):
 	print "[add_player]"
 	print request
-	print request.body
-	print request.POST
-	newPlayerData = json.loads(request.body)
+	# print request.body
+	print request.message.content
+	newPlayerData = json.loads(request.message.content)
 	player = Player.objects.create(first_name=newPlayerData['first_name'],\
 									last_name=newPlayerData['last_name'],\
 									position=newPlayerData['position'])
 	print player.id
 	return HttpResponse(status=200)
+
+def testview(request):
+	print "[testview]"
+	return HttpResponse("its all good")
