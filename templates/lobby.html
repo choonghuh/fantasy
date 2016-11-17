@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <head>	
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
 
-	<!--script src="jquery.min.js"></script>
-	<script src="bootstrap.min.js"></script>
-	<link rel="stylesheet" href="bootstrap.min.css"-->
+	<script src="/static/jquery.min.js"></script>
+	<script src="/static/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="/static/bootstrap.min.css">
 
 </head>
 <body>
@@ -17,7 +17,7 @@
 	{% if player_list %}
 		<ul>
 			{% for player in player_list %}
-				<li> {{ player.name }} is ranked at {{ player.rank }} </li>
+				<li> {{ player.first_name }} {{ player.last_name }} || Pos. {{ player.position }} </li>
 			{% endfor %}
 		</ul>
 		<script type="text/javascript">
@@ -27,14 +27,19 @@
 		<p>Player list is empty or unavailable!</p>
 	{% endif %}
 
-	<input id='submit'></input>
-	<button id='sendbutton'>Send</button>
-	</br></br>
+
 
 	<div id='chatbox' class="col-sm-4">
 		<ul class="list-group" id="chat-ul">
 
 		</ul>
+
+		<form>
+			<label for='text-submit'>Enter your message</label>
+			<input class='form-control' id='text-submit'></input>
+			<button type="button" class="btn btn-default btn-block" id='sendbutton'>Send</button>
+		</form>
+
 	</div>
 
 	<div class="col-sm-4">
@@ -95,35 +100,45 @@
 		var playerAddFirstName = document.getElementById('firstname2');
 		var playerAddLastName = document.getElementById('lastname2');
 
+		var errorobj = undefined;
+
 		var playerAddButtonHandler = function(){
 
 			var playerAddURL = 'http://'+serverAddress+'/add_player/';
-			var playerAddPayload = {
-				'first_name':playerAddFirstName.value,
-				'last_name':playerAddLastName.value,
-				'position':playerPositionSelect.value,
-			};
+			//var playerAddURL = 'localhost:8000/add_player/';
+			// var playerAddPayload = {
+			// 	'first_name':playerAddFirstName.value,
+			// 	'last_name':playerAddLastName.value,
+			// 	'position':playerPositionSelect.value,
+			// };
+           var playerAddPayload = {};
+           playerAddPayload['first_name'] = playerAddFirstName.value;
+           playerAddPayload['last_name'] = playerAddLastName.value;
+           playerAddPayload['position'] = playerPositionSelect.value;
 
 			console.log(playerAddPayload);
 			
 			var fullname = playerAddPayload['first_name'] + " " + playerAddPayload['last_name'];
 			//alert("gonna call add");
 			$.ajax({
+				type:'POST',
+				dataType:'html', 
+				// TODO - Learn why datatype:json goes to error
+				// - Apparently return data is not a valid json (For ASGI at least)
 				url:playerAddURL,
-				data:JSON.stringify(playerAddPayload),
-				contentType:'json',
-				type: 'POST',
+				data: JSON.stringify(playerAddPayload),
+				//contentType:'json',
+				//type: 'POST',
 			    
-			    beforeSend: function(xhr, settings) {
-		            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-			    },
-				success: function()
+			    beforeSend: function(xhr) {xhr.setRequestHeader("X-CSRFToken", csrftoken);},
+				success: function(responseData, textStatus, jqXHR)
 				{
-					chatbox.innerHTML += "<p>Player " + fullname + "  added</p>";
+					chatbox.innerHTML += "<li class='list-group-item'>[Ingame] Player " + fullname + "  added</li>";
 				},
-				error: function()
+				error: function(e)
 				{
-					alert("Failed to add " + fullname);
+					errorobj = e;
+					alert(e);
 				}
 			});
 		};
@@ -134,10 +149,10 @@
 
 		var chatbox = document.getElementById('chat-ul');
 		var sendbutton = document.getElementById('sendbutton');
-		var submit = document.getElementById('submit');
+		var submit = document.getElementById('text-submit');
 
 		wsock.onmessage = function(msg) {
-			chatbox.innerHTML+='<li class="list-group-item">'+msg.data+'</li>';
+			chatbox.innerHTML+='<li class="list-group-item">[Chat] '+msg.data+'</li>';
 		};
 
 		wsock.onopen = function(){
@@ -156,6 +171,7 @@
 			}
 		};
 
+		// TODO - When this triggers, the page reloads... Do not want that.
 		submit.addEventListener("keydown", function(e) {
 			// if (!e) {var e = window.event;}
 			// e.preventDefault();

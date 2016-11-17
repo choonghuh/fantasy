@@ -59,12 +59,19 @@ TEMPLATES = [
     },
 ]
 
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "asgi_redis.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("localhost", 6379)],
+#         },
+#         "ROUTING": "fantasy.routing.channel_routing",
+#     },
+# }
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("localhost", 6379)],
-        },
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
         "ROUTING": "fantasy.routing.channel_routing",
     },
 }
