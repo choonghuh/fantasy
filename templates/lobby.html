@@ -13,7 +13,7 @@
 
 	<div id='header'><p>Draft Lobby</p></div>
 
-
+	<div id='player-list' class="col-sm-4">
 	{% if player_list %}
 		<ul>
 			{% for player in player_list %}
@@ -27,7 +27,7 @@
 		<p>Player list is empty or unavailable!</p>
 	{% endif %}
 
-
+	</div>
 
 	<div id='chatbox' class="col-sm-4">
 		<ul class="list-group" id="chat-ul">
@@ -41,27 +41,25 @@
 	</div>
 
 	<div class="col-sm-4">
-		<form>
-			<div class="form-group">
-				<label for='firstname2'>First name:</label>
-				<input class='form-control' id='firstname2'>
-			</div>
-			<div class="form-group">
-				<label for='lastname2'>Last name:</label>
-				<input class='form-control' id='lastname2'>
-			</div>
-			<div class="form-group">
-				<label for='position2'>Position:</label>
-				<select class='form-control' id='position2'>
-					<option value"PG" selected>PG</option>
-					<option value"SG">SG</option>
-					<option value"SF">SF</option>
-					<option value"PF">PF</option>
-					<option value"C">C</option>
-				</select>
-			</div>
-			<button type="button" class="btn btn-default btn-block" id='add-player-submit'>Submit</button>
-		</form>
+		<div class="form-group">
+			<label for='firstname2'>First name:</label>
+			<input class='form-control' id='firstname2'>
+		</div>
+		<div class="form-group">
+			<label for='lastname2'>Last name:</label>
+			<input class='form-control' id='lastname2'>
+		</div>
+		<div class="form-group">
+			<label for='position2'>Position:</label>
+			<select class='form-control' id='position2'>
+				<option value"PG" selected>PG</option>
+				<option value"SG">SG</option>
+				<option value"SF">SF</option>
+				<option value"PF">PF</option>
+				<option value"C">C</option>
+			</select>
+		</div>
+		<button type="button" class="btn btn-default btn-block" id='add-player-submit'>Submit</button>
 	</div>
 
 	</br>
