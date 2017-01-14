@@ -1,67 +1,81 @@
 <!DOCTYPE html>
 <head>	
-	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-	<script src="/static/jquery.min.js"></script>
-	<script src="/static/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="/static/bootstrap.min.css">
+	<!--script src="/static/jquery.min.js"></script-->
+	<!--script src="/static/bootstrap.min.js"></script-->
+	<!--link rel="stylesheet" href="/static/bootstrap.min.css"-->
 
 </head>
 <body>
 
 	<div id='header'><p>Draft Lobby</p></div>
 
-	<div id='player-list' class="col-sm-4">
-	{% if player_list %}
-		<ul>
-			{% for player in player_list %}
-				<li> {{ player.first_name }} {{ player.last_name }} || Pos. {{ player.position }} </li>
-			{% endfor %}
-		</ul>
-		<script type="text/javascript">
-			var player_list = {{player_list_raw|safe}};
-		</script>
-	{% else %}
-		<p>Player list is empty or unavailable!</p>
-	{% endif %}
+	<div class="container">
 
-	</div>
-
-	<div id='chatbox' class="col-sm-4">
-		<ul class="list-group" id="chat-ul">
-
+		<ul class="nav nav-pills nav-justified">
+			<li class="active"><a href="#player-list" data-toggle="tab">Player List</a></li>
+			<li><a href="#chatbox" data-toggle="tab">Chat Window</a></li>
+			<li><a href="#add-player" data-toggle="tab">Add a Player</a></li>
 		</ul>
 
-			<label for='text-submit'>Enter your message</label>
-			<input class='form-control' id='text-submit'></input>
-			<button type="button" class="btn btn-default btn-block" id='sendbutton'>Send</button>
+		<div class="tab-content">
 
-	</div>
+			<!-- TAB 1 CONTENT -->
+			<div id='player-list' class="tab-pane fade in active">
+			{% if player_list %}
+				<ul>
+					{% for player in player_list %}
+						<li> {{ player.first_name }} {{ player.last_name }} || Pos. {{ player.position }} </li>
+					{% endfor %}
+				</ul>
+				<script type="text/javascript">
+					var player_list = {{player_list_raw|safe}};
+				</script>
+			{% else %}
+				<p>Player list is empty or unavailable!</p>
+			{% endif %}
+			</div>
 
-	<div class="col-sm-4">
-		<div class="form-group">
-			<label for='firstname2'>First name:</label>
-			<input class='form-control' id='firstname2'>
-		</div>
-		<div class="form-group">
-			<label for='lastname2'>Last name:</label>
-			<input class='form-control' id='lastname2'>
-		</div>
-		<div class="form-group">
-			<label for='position2'>Position:</label>
-			<select class='form-control' id='position2'>
-				<option value"PG" selected>PG</option>
-				<option value"SG">SG</option>
-				<option value"SF">SF</option>
-				<option value"PF">PF</option>
-				<option value"C">C</option>
-			</select>
-		</div>
-		<button type="button" class="btn btn-default btn-block" id='add-player-submit'>Submit</button>
-	</div>
 
+			<!-- TAB 2 CONTENT -->
+			<div id='chatbox' class="tab-pane fade">
+				<ul class="list-group" id="chat-ul">
+
+				</ul>
+
+					<label for='text-submit'>Enter your message</label>
+					<input class='form-control' id='text-submit'></input>
+					<button type="button" class="btn btn-default btn-block" id='sendbutton'>Send</button>
+
+			</div>
+
+
+			<!-- TAB 3 CONTENT -->
+			<div id='add-player' class="tab-pane fade">
+				<div class="form-group">
+					<label for='firstname2'>First name:</label>
+					<input class='form-control' id='firstname2'>
+				</div>
+				<div class="form-group">
+					<label for='lastname2'>Last name:</label>
+					<input class='form-control' id='lastname2'>
+				</div>
+				<div class="form-group">
+					<label for='position2'>Position:</label>
+					<select class='form-control' id='position2'>
+						<option value"PG" selected>PG</option>
+						<option value"SG">SG</option>
+						<option value"SF">SF</option>
+						<option value"PF">PF</option>
+						<option value"C">C</option>
+					</select>
+				</div>
+				<button type="button" class="btn btn-default btn-block" id='add-player-submit'>Submit</button>
+			</div>
+		</div>
 	</br>
 
 </br>
@@ -70,6 +84,8 @@
 //================================= Important Vars =================================
 
 		var serverAddress = '127.0.0.1:8001';
+		
+		// TODO - Get some user credentials before opening WS?
 		var wsock = new WebSocket('ws://'+serverAddress +'/ws/');
 
 		function getCookie(name) {
